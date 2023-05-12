@@ -21,18 +21,20 @@ public class PetData {
         boolean exit = false;
 
         while (true) {
-            System.out.println("What would you like to do?");
-            System.out.println("1) View all pets");
-            System.out.println("2) Add more pets");
-            System.out.println("3) Update an existing pet");
-            System.out.println("4) Remove an existing pet");
-            System.out.println("5) Search pets by name");
-            System.out.println("6) Search pets by age");
-            System.out.println("7) Exit program");
-            System.out.print("\nYour choice: ");
+            displayMenu();
 
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // consume the newline character
+            //Error handling
+            int choice;
+            while (true) {
+                try {
+                    choice = Integer.parseInt(scanner.nextLine());
+                    break;
+                } catch (NumberFormatException e) {
+                    // code that handles the exception
+                    System.out.println("Invalid input, please try again.");
+                    System.out.print("Your choice: ");
+                }
+            }
 
             //use switch() method to let user to choose
             switch (choice) {
@@ -43,10 +45,10 @@ public class PetData {
                     addPet(pets);
                     break;
                 case 3:
-                    //updatePet(pets);
+                    updatePet(pets);
                     break;
                 case 4:
-                    //removePet(pets);
+                    removePet(pets);
                     break;
                 case 5:
                     searchByName(pets);
@@ -61,10 +63,23 @@ public class PetData {
                 default:
                     System.out.println("Invalid choice, please try again.");
             }
+            //case 7 will trigger this if statement
             if (exit) {
                 break;
             }
         }
+    }
+
+    private static void displayMenu() {
+        System.out.println("What would you like to do?");
+        System.out.println("1) View all pets");
+        System.out.println("2) Add more pets");
+        System.out.println("3) Update an existing pet");
+        System.out.println("4) Remove an existing pet");
+        System.out.println("5) Search pets by name");
+        System.out.println("6) Search pets by age");
+        System.out.println("7) Exit program");
+        System.out.print("\nYour choice: ");
     }
 
     //case 1
@@ -171,6 +186,68 @@ public class PetData {
         } else {
             System.out.println("+----------------------+");
             System.out.printf("%d rows in set.\n", i);
+        }
+    }
+
+    private static void updatePet(ArrayList<Pet> pets) {
+        Scanner scanner = new Scanner(System.in);
+        //Shows the user a table of all the pets 
+        viewAllPets(pets);
+
+        System.out.print("Enter the ID of the pet to update: ");
+        //reads the pet ID that the user wants to update.
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        //if the id is valid
+        if (id >= 0 && id < pets.size()) {
+            Pet pet = pets.get(id);//get id from user prompt
+            String oldName = pet.getName();
+            int oldAge = pet.getAge();
+
+            System.out.print("Enter new name and new age: ");
+            String input = scanner.nextLine();
+            //split the input into an array of strings using the split() method
+            String[] parts = input.split(" ");
+            if (parts.length == 2) {
+                String newName = parts[0];
+                int newAge = Integer.parseInt(parts[1]);
+                pet.setName(newName);
+                pet.setAge(newAge);
+                //%s is used to print a string
+                //%d is used to print an integer
+                System.out.printf("%s %d changed to %s %d.\n\n", oldName, oldAge, newName, newAge);
+
+            } else {
+                System.out.println("Invalid input.");
+            }
+        } else {
+            System.out.println("Invalid ID, no pet found.");
+        }
+    }
+
+    private static void removePet(ArrayList<Pet> pets) {
+        Scanner scanner = new Scanner(System.in);
+        //Shows the user a table of all the pets 
+        viewAllPets(pets);
+
+        System.out.print("Enter the ID of the pet to remove: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        //make sure the id is valid
+        if (id >= 0 && id < pets.size()) {
+            //get id before the remove() from user prompt
+            Pet pet = pets.get(id);
+            //get name and age
+            String name = pet.getName();
+            int age = pet.getAge();
+            //use remove()
+            pets.remove(id);
+
+            System.out.printf("%s %d is removed.\n\n", name, age);
+        } else {
+            System.out.println("Invalid ID, no pet found.");
         }
     }
 
