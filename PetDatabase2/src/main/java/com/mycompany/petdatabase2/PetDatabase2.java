@@ -126,11 +126,7 @@ public class PetDatabase2 {
             String name = parts[0];
             String ageString = parts[1];
 
-            /*     if (!ageString.matches("\\d+")) {
-                System.out.println("Error: " + ageString + " is not a valid input.");
-                continue;
-            }
-             */
+          
             int age = Integer.parseInt(ageString);
 
             if (age < 1 || age > 20) {
@@ -151,14 +147,7 @@ public class PetDatabase2 {
 
     private static void removePet(String[] petNames, int[] petAges, int petCount) {
         Scanner scanner = new Scanner(System.in);
-        /*System.out.println("+----------------------+");
-        System.out.println("| ID | NAME    | AGE |");
-        System.out.println("+----------------------+");
-        for (int i = 0; i < petCount; i++) {
-            System.out.printf("| %2d | %-7s | %3d |\n", i, petNames[i], petAges[i]);
-        }
-        System.out.println("+----------------------+");
-        System.out.println(petCount + " rows in set.");*/
+        
         viewAllPets(petNames, petAges, petCount);
 
         System.out.print("Enter the pet ID to remove: ");
@@ -173,13 +162,13 @@ public class PetDatabase2 {
         String removedPetName = petNames[id];
         int removedPetAge = petAges[id];
 
-        // Shift the array elements to remove the pet
+        //shift the array elements to remove the pet
         for (int i = id; i < petCount - 1; i++) {
             petNames[i] = petNames[i + 1];
             petAges[i] = petAges[i + 1];
         }
 
-        // Reset the last element in the arrays
+        //reset the last element in the arrays
         petNames[petCount - 1] = null;
         petAges[petCount - 1] = 0;
 
