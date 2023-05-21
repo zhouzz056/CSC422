@@ -9,6 +9,10 @@ package com.mycompany.petdatabase2;
  * @author Ziqi
  */
 import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class PetDatabase2 {
 
@@ -18,6 +22,7 @@ public class PetDatabase2 {
         String[] petNames = new String[5];
         int[] petAges = new int[5];
         int petCount = 0;
+        loadPetData(petNames, petAges); // Load pet data from file
 
         System.out.println("Pet Database Program.");
         int choice = 0;
@@ -40,15 +45,35 @@ public class PetDatabase2 {
                     petCount = getPetCount(petNames); // Update pet count
                     break;
                 case 4:
+                    savePetData(petNames, petAges, petCount);
                     System.out.println("Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid input, please try again.");
-                    
+
                     break;
             }
         } while (choice != 4);
     }
+    
+    //reads the pet data from file using a BufferedReader
+    private static void loadPetData(String[] petNames, int[] petAges) {
+    try (BufferedReader reader = new BufferedReader(new FileReader("petdata.txt"))) {
+        String line;
+        int petCount = 0;
+        while ((line = reader.readLine()) != null && petCount < petNames.length) {
+            String[] petData = line.split(",");
+            String name = petData[0];
+            int age = Integer.parseInt(petData[1]);
+            petNames[petCount] = name;
+            petAges[petCount] = age;
+            petCount++;
+        }
+        System.out.println("Pet data loaded from file.");
+    } catch (IOException e) {
+        System.out.println("Error loading pet data: " + e.getMessage());
+    }
+}
 
     private static void displayMenu() {
         System.out.println("\nWhat would you like to do?");
@@ -101,11 +126,11 @@ public class PetDatabase2 {
             String name = parts[0];
             String ageString = parts[1];
 
-       /*     if (!ageString.matches("\\d+")) {
+            /*     if (!ageString.matches("\\d+")) {
                 System.out.println("Error: " + ageString + " is not a valid input.");
                 continue;
             }
-*/
+             */
             int age = Integer.parseInt(ageString);
 
             if (age < 1 || age > 20) {
@@ -119,11 +144,10 @@ public class PetDatabase2 {
             petsAdded++;
         }
 
-        if (petsAdded > 0) {          
+        if (petsAdded > 0) {
             System.out.printf("%d pet added.\n", petsAdded);
         }
     }
-
 
     private static void removePet(String[] petNames, int[] petAges, int petCount) {
         Scanner scanner = new Scanner(System.in);
@@ -140,7 +164,7 @@ public class PetDatabase2 {
         System.out.print("Enter the pet ID to remove: ");
         int id = scanner.nextInt();
         scanner.nextLine();
-        
+
         if (id < 0 || id >= petCount) {
             System.out.println("Error: ID " + id + " does not exist.");
             return;
@@ -161,7 +185,7 @@ public class PetDatabase2 {
 
         petCount--;
 
-        System.out.println(removedPetName + " "+ removedPetAge + " is removed.");
+        System.out.println(removedPetName + " " + removedPetAge + " is removed.");
     }
 
     private static int getPetCount(String[] petNames) {
@@ -172,5 +196,19 @@ public class PetDatabase2 {
             }
         }
         return count;
+    }
+
+    private static void savePetData(String[] petNames, int[] petAges, int petCount) {
+       //use a FileWriter to write the pet data to a file
+        try ( FileWriter writer = new FileWriter("petdata.txt")) {
+            for (int i = 0; i < petCount; i++) {
+                //Each line in the file represents a pet's data, with the name and age separated by a comma.
+                String petData = petNames[i] + "," + petAges[i] + "\n";
+                writer.write(petData);
+            }
+            System.out.println("Pet data saved to file.");
+        } catch (IOException e) {
+            System.out.println("Error saving pet data: " + e.getMessage());
+        }
     }
 }
